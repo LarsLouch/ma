@@ -9,11 +9,11 @@
     <meta property="og:description" content="Uma aventura de plataforma 3D em construção, dedicada à Maísa.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://larslouch.github.io/ma/">
-    <meta property="og:image" content="https://larslouch.github.io/ma/plataforma-3d-bahia-maisa.png">
+    <meta property="og:image" content="https://larslouch.github.io/ma/plataforma-3d-bahia-iluminacao.webp">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="PLATAFORMA 3D DEDICADO A MAISA">
     <meta name="twitter:description" content="Uma aventura de plataforma 3D em construção, dedicada à Maísa.">
-    <meta name="twitter:image" content="https://larslouch.github.io/ma/plataforma-3d-bahia-maisa.png">
+    <meta name="twitter:image" content="https://larslouch.github.io/ma/plataforma-3d-bahia-iluminacao.webp">
     <title>PLATAFORMA 3D DEDICADO A MAISA</title>
     <style>
       :root {
@@ -188,10 +188,35 @@
         backdrop-filter: blur(18px);
       }
 
-      .gallery-layout {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) 230px;
-        gap: 12px;
+      .gallery-heading {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 8px 8px 16px;
+      }
+
+      .gallery-kicker {
+        margin: 0 0 5px;
+        color: #71e0da;
+        font-size: 0.72rem;
+        font-weight: 850;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      .gallery-heading h2 {
+        margin: 0;
+        font-size: clamp(1.18rem, 3vw, 1.75rem);
+        letter-spacing: -0.035em;
+      }
+
+      .gallery-hint {
+        margin: 0;
+        color: #8da3b8;
+        font-size: 0.78rem;
+        line-height: 1.4;
+        text-align: right;
       }
 
       .stage {
@@ -200,6 +225,7 @@
         overflow: hidden;
         border-radius: 18px;
         background: #030b13;
+        touch-action: pan-y;
       }
 
       .stage::after {
@@ -211,16 +237,29 @@
         content: "";
       }
 
-      .stage img {
+      .slides {
+        display: flex;
+        transform: translate3d(0, 0, 0);
+        transition: transform 680ms cubic-bezier(0.22, 1, 0.36, 1);
+        will-change: transform;
+      }
+
+      .slide {
+        position: relative;
+        flex: 0 0 100%;
+        margin: 0;
+      }
+
+      .slide img {
         display: block;
         width: 100%;
         aspect-ratio: 16 / 9;
-        object-fit: contain;
+        object-fit: cover;
         background: #030b13;
-        transition: opacity 180ms ease, transform 420ms ease;
+        transition: transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
       }
 
-      .stage:hover img { transform: scale(1.008); }
+      .stage:hover .slide[aria-hidden="false"] img { transform: scale(1.012); }
 
       .caption {
         position: absolute;
@@ -275,8 +314,7 @@
         transform: translateY(-50%) scale(1.06);
       }
 
-      .nav-button:focus-visible,
-      .thumb:focus-visible {
+      .nav-button:focus-visible {
         outline: 3px solid #9ff1df;
         outline-offset: 3px;
       }
@@ -284,53 +322,35 @@
       .previous { left: 16px; }
       .next { right: 16px; }
 
-      .playlist {
-        display: grid;
-        align-content: start;
-        gap: 10px;
-      }
-
-      .thumb {
-        display: grid;
+      .gallery-controls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         gap: 9px;
-        width: 100%;
-        padding: 8px 8px 11px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 16px;
-        color: #dbe8f4;
-        background: rgba(4, 15, 25, 0.72);
-        text-align: left;
+        min-height: 42px;
+        padding: 13px 8px 3px;
+      }
+
+      .gallery-dot {
+        width: 34px;
+        height: 5px;
+        padding: 0;
+        border: 0;
+        border-radius: 999px;
+        background: rgba(177, 204, 224, 0.24);
         cursor: pointer;
-        transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+        transition: width 180ms ease, background 180ms ease, transform 180ms ease;
       }
 
-      .thumb:hover {
-        border-color: rgba(113, 224, 218, 0.46);
-        transform: translateY(-2px);
+      .gallery-dot:hover { transform: scaleY(1.5); }
+
+      .gallery-dot[aria-current="true"] {
+        width: 52px;
+        background: #71e0da;
+        box-shadow: 0 0 16px rgba(113, 224, 218, 0.52);
       }
 
-      .thumb[aria-pressed="true"] {
-        border-color: #71e0da;
-        background: rgba(30, 143, 145, 0.19);
-        box-shadow: 0 0 0 1px rgba(113, 224, 218, 0.18) inset;
-      }
-
-      .thumb img {
-        display: block;
-        width: 100%;
-        aspect-ratio: 16 / 10;
-        border-radius: 10px;
-        object-fit: cover;
-        object-position: center top;
-        background: #030b13;
-      }
-
-      .thumb span {
-        padding: 0 3px;
-        font-size: 0.82rem;
-        font-weight: 750;
-        line-height: 1.3;
-      }
+      .gallery-dot:focus-visible { outline: 3px solid #9ff1df; outline-offset: 5px; }
 
       footer {
         margin-top: 30px;
@@ -345,8 +365,8 @@
       @media (max-width: 760px) {
         body { padding-inline: 12px; }
         .featured-video-heading { align-items: start; }
-        .gallery-layout { grid-template-columns: 1fr; }
-        .playlist { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .gallery-heading { align-items: start; }
+        .gallery-hint { display: none; }
         .nav-button { width: 38px; height: 38px; }
         .previous { left: 10px; }
         .next { right: 10px; }
@@ -386,29 +406,43 @@
         <p class="video-description">Demonstração atual da movimentação, do cenário celeste e da sequência de plataformas da primeira fase.</p>
       </section>
 
-      <section class="gallery" aria-label="Galeria de imagens do jogo">
-        <div class="gallery-layout">
-          <div class="stage">
-            <img id="gallery-main" src="./plataforma-3d-bahia-maisa.png" alt="Personagem do jogo Plataforma 3D observando o cenário inspirado na Bahia" fetchpriority="high">
-            <button class="nav-button previous" type="button" aria-label="Foto anterior">‹</button>
-            <button class="nav-button next" type="button" aria-label="Próxima foto">›</button>
-            <div class="caption" aria-live="polite">
-              <strong id="gallery-caption">Mundo celeste inspirado na Bahia</strong>
-              <span class="counter" id="gallery-counter">01 / 02</span>
-            </div>
+      <section class="gallery" aria-labelledby="gallery-title">
+        <div class="gallery-heading">
+          <div>
+            <p class="gallery-kicker">Imagens atuais do jogo</p>
+            <h2 id="gallery-title">A nova luz da Bahia celeste</h2>
           </div>
+          <p class="gallery-hint">Arraste ou use as setas<br>para percorrer a fase</p>
+        </div>
 
-          <div class="playlist" role="group" aria-label="Escolha uma foto">
-            <button class="thumb" type="button" aria-pressed="true" data-src="./plataforma-3d-bahia-maisa.png" data-alt="Personagem do jogo Plataforma 3D observando o cenário inspirado na Bahia" data-caption="Mundo celeste inspirado na Bahia">
-              <img src="./plataforma-3d-bahia-maisa.png" alt="" aria-hidden="true">
-              <span>Cenário da Bahia</span>
-            </button>
-
-            <button class="thumb" type="button" aria-pressed="false" data-src="./pose-de-rainha.png" data-alt="Personagem do jogo em pose de rainha" data-caption="Pose de Rainha">
-              <img src="./pose-de-rainha.png" alt="" aria-hidden="true" loading="lazy">
-              <span>Pose de Rainha</span>
-            </button>
+        <div class="stage" tabindex="0" role="region" aria-roledescription="carrossel" aria-label="Galeria da fase da Bahia">
+          <div class="slides">
+            <figure class="slide" aria-hidden="false" data-caption="Praça de abertura com a nova iluminação">
+              <img src="./plataforma-3d-bahia-iluminacao.webp" alt="Personagem na praça de abertura do jogo, cercada por casarões baianos, jardins e uma fonte" fetchpriority="high">
+            </figure>
+            <figure class="slide" aria-hidden="true" data-caption="Casarões, fonte e jardins em composição">
+              <img src="./plataforma-3d-praca-fonte.webp" alt="Vista lateral da praça com casarões coloridos, fonte, palmeiras e jardins" loading="lazy">
+            </figure>
+            <figure class="slide" aria-hidden="true" data-caption="Jardins integrados ao percurso">
+              <img src="./plataforma-3d-jardins.webp" alt="Vista do personagem entre o piso de pedra, a fonte e os jardins da fase" loading="lazy">
+            </figure>
+            <figure class="slide" aria-hidden="true" data-caption="Panorama celeste da primeira fase">
+              <img src="./plataforma-3d-panorama.webp" alt="Panorama aberto da praça e das montanhas acima das nuvens" loading="lazy">
+            </figure>
           </div>
+          <button class="nav-button previous" type="button" aria-label="Foto anterior">‹</button>
+          <button class="nav-button next" type="button" aria-label="Próxima foto">›</button>
+          <div class="caption" aria-live="polite">
+            <strong id="gallery-caption">Praça de abertura com a nova iluminação</strong>
+            <span class="counter" id="gallery-counter">01 / 04</span>
+          </div>
+        </div>
+
+        <div class="gallery-controls" role="group" aria-label="Escolha uma foto">
+          <button class="gallery-dot" type="button" aria-label="Mostrar foto 1" aria-current="true"></button>
+          <button class="gallery-dot" type="button" aria-label="Mostrar foto 2" aria-current="false"></button>
+          <button class="gallery-dot" type="button" aria-label="Mostrar foto 3" aria-current="false"></button>
+          <button class="gallery-dot" type="button" aria-label="Mostrar foto 4" aria-current="false"></button>
         </div>
       </section>
 
@@ -416,36 +450,74 @@
     </main>
 
     <script>
-      const mainImage = document.querySelector("#gallery-main");
+      const stage = document.querySelector(".stage");
+      const slideTrack = document.querySelector(".slides");
+      const slides = [...document.querySelectorAll(".slide")];
+      const dots = [...document.querySelectorAll(".gallery-dot")];
       const caption = document.querySelector("#gallery-caption");
       const counter = document.querySelector("#gallery-counter");
-      const thumbnails = [...document.querySelectorAll(".thumb")];
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
       let currentIndex = 0;
+      let autoplayTimer = 0;
+      let pointerStartX = null;
 
-      function showImage(index) {
-        currentIndex = (index + thumbnails.length) % thumbnails.length;
-        const selected = thumbnails[currentIndex];
-
-        mainImage.style.opacity = "0";
-        window.setTimeout(() => {
-          mainImage.src = selected.dataset.src;
-          mainImage.alt = selected.dataset.alt;
-          caption.textContent = selected.dataset.caption;
-          counter.textContent = `${String(currentIndex + 1).padStart(2, "0")} / ${String(thumbnails.length).padStart(2, "0")}`;
-          mainImage.style.opacity = "1";
-        }, 100);
-
-        thumbnails.forEach((thumbnail, thumbnailIndex) => {
-          thumbnail.setAttribute("aria-pressed", String(thumbnailIndex === currentIndex));
-        });
+      function stopAutoplay() {
+        window.clearInterval(autoplayTimer);
+        autoplayTimer = 0;
       }
 
-      thumbnails.forEach((thumbnail, index) => {
-        thumbnail.addEventListener("click", () => showImage(index));
+      function startAutoplay() {
+        stopAutoplay();
+        if (reducedMotion.matches || document.hidden) return;
+        autoplayTimer = window.setInterval(() => showImage(currentIndex + 1), 5200);
+      }
+
+      function showImage(index, restart = false) {
+        currentIndex = (index + slides.length) % slides.length;
+        slideTrack.style.transform = `translate3d(-${currentIndex * 100}%, 0, 0)`;
+        caption.textContent = slides[currentIndex].dataset.caption;
+        counter.textContent = `${String(currentIndex + 1).padStart(2, "0")} / ${String(slides.length).padStart(2, "0")}`;
+
+        slides.forEach((slide, slideIndex) => {
+          slide.setAttribute("aria-hidden", String(slideIndex !== currentIndex));
+        });
+        dots.forEach((dot, dotIndex) => {
+          dot.setAttribute("aria-current", String(dotIndex === currentIndex));
+        });
+        if (restart) startAutoplay();
+      }
+
+      dots.forEach((dot, index) => {
+        dot.addEventListener("click", () => showImage(index, true));
       });
 
-      document.querySelector(".previous").addEventListener("click", () => showImage(currentIndex - 1));
-      document.querySelector(".next").addEventListener("click", () => showImage(currentIndex + 1));
+      document.querySelector(".previous").addEventListener("click", () => showImage(currentIndex - 1, true));
+      document.querySelector(".next").addEventListener("click", () => showImage(currentIndex + 1, true));
+      stage.addEventListener("keydown", (event) => {
+        if (event.key === "ArrowLeft") showImage(currentIndex - 1, true);
+        else if (event.key === "ArrowRight") showImage(currentIndex + 1, true);
+        else return;
+        event.preventDefault();
+      });
+      stage.addEventListener("pointerdown", (event) => {
+        if (!event.target.closest("button")) pointerStartX = event.clientX;
+      });
+      stage.addEventListener("pointerup", (event) => {
+        if (pointerStartX === null) return;
+        const distance = event.clientX - pointerStartX;
+        pointerStartX = null;
+        if (Math.abs(distance) > 45) showImage(currentIndex + (distance < 0 ? 1 : -1), true);
+      });
+      stage.addEventListener("pointercancel", () => { pointerStartX = null; });
+      stage.addEventListener("mouseenter", stopAutoplay);
+      stage.addEventListener("mouseleave", startAutoplay);
+      stage.addEventListener("focusin", stopAutoplay);
+      stage.addEventListener("focusout", (event) => {
+        if (!stage.contains(event.relatedTarget)) startAutoplay();
+      });
+      document.addEventListener("visibilitychange", startAutoplay);
+      reducedMotion.addEventListener("change", startAutoplay);
+      startAutoplay();
     </script>
   </body>
 </html>
